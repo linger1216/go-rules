@@ -211,7 +211,7 @@ func judgeEQ(left interface{}, right IFiled) (bool, error) {
 		if err != nil {
 			return false, err
 		}
-		return _listStringEQ(v, right.Value().([]string)), nil
+		return _listStringEQListString(v, right.Value().([]string)), nil
 	case TypeValueListDoubles:
 		v, err := toListFloat(left)
 		if err != nil {
@@ -260,7 +260,7 @@ func judgeNE(left interface{}, right IFiled) (bool, error) {
 		if err != nil {
 			return false, err
 		}
-		return !_listStringEQ(v, right.Value().([]string)), nil
+		return !_listStringEQListString(v, right.Value().([]string)), nil
 	case TypeValueListDoubles:
 		v, err := toListFloat(left)
 		if err != nil {

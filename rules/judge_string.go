@@ -80,19 +80,12 @@ func (s *StringJudge) GE(left interface{}, right IFiled) (bool, error) {
 	case TypeValueString:
 		return leftValue >= right.Value().(string), nil
 	case TypeValueBoolean:
-		return false, ErrInvalidOperator
 	case TypeValueNull:
-		return false, ErrInvalidOperator
 	case TypeValueDouble:
-		return false, ErrInvalidOperator
 	case TypeValueInteger:
-		return false, ErrInvalidOperator
 	case TypeValueListStrings:
-		return false, ErrInvalidOperator
 	case TypeValueListDoubles:
-		return false, ErrInvalidOperator
 	case TypeValueListIntegers:
-		return false, ErrInvalidOperator
 	}
 	return false, ErrInvalidType
 }
@@ -107,19 +100,12 @@ func (s *StringJudge) LT(left interface{}, right IFiled) (bool, error) {
 	case TypeValueString:
 		return leftValue < right.Value().(string), nil
 	case TypeValueBoolean:
-		return false, ErrInvalidOperator
 	case TypeValueNull:
-		return false, ErrInvalidOperator
 	case TypeValueDouble:
-		return false, ErrInvalidOperator
 	case TypeValueInteger:
-		return false, ErrInvalidOperator
 	case TypeValueListStrings:
-		return false, ErrInvalidOperator
 	case TypeValueListDoubles:
-		return false, ErrInvalidOperator
 	case TypeValueListIntegers:
-		return false, ErrInvalidOperator
 	}
 	return false, ErrInvalidType
 }
@@ -134,19 +120,12 @@ func (s *StringJudge) LE(left interface{}, right IFiled) (bool, error) {
 	case TypeValueString:
 		return leftValue <= right.Value().(string), nil
 	case TypeValueBoolean:
-		return false, ErrInvalidOperator
 	case TypeValueNull:
-		return false, ErrInvalidOperator
 	case TypeValueDouble:
-		return false, ErrInvalidOperator
 	case TypeValueInteger:
-		return false, ErrInvalidOperator
 	case TypeValueListStrings:
-		return false, ErrInvalidOperator
 	case TypeValueListDoubles:
-		return false, ErrInvalidOperator
 	case TypeValueListIntegers:
-		return false, ErrInvalidOperator
 	}
 	return false, ErrInvalidType
 }
@@ -161,19 +140,12 @@ func (s *StringJudge) Contain(left interface{}, right IFiled) (bool, error) {
 	case TypeValueString:
 		return leftValue == right.Value().(string), nil
 	case TypeValueBoolean:
-		return false, ErrInvalidOperator
 	case TypeValueNull:
-		return false, ErrInvalidOperator
 	case TypeValueDouble:
-		return false, ErrInvalidOperator
 	case TypeValueInteger:
-		return false, ErrInvalidOperator
 	case TypeValueListStrings:
-		return false, ErrInvalidOperator
 	case TypeValueListDoubles:
-		return false, ErrInvalidOperator
 	case TypeValueListIntegers:
-		return false, ErrInvalidOperator
 	}
 	return false, ErrInvalidType
 }
@@ -187,24 +159,18 @@ func (s *StringJudge) Prefix(left interface{}, right IFiled) (bool, error) {
 	case TypeValueString:
 		return strings.HasPrefix(leftValue, right.Value().(string)), nil
 	case TypeValueBoolean:
-		return false, ErrInvalidOperator
 	case TypeValueNull:
-		return false, ErrInvalidOperator
 	case TypeValueDouble:
-		return false, ErrInvalidOperator
 	case TypeValueInteger:
-		return false, ErrInvalidOperator
 	case TypeValueListStrings:
-		return false, ErrInvalidOperator
+		return _stringPrefixListString(leftValue, right.Value().([]string)), nil
 	case TypeValueListDoubles:
-		return _stringPrefix(leftValue, right.Value().([]string)), nil
 	case TypeValueListIntegers:
-		return false, ErrInvalidOperator
 	}
 	return false, ErrInvalidType
 }
 
-func _stringPrefix(v string, arr []string) bool {
+func _stringPrefixListString(v string, arr []string) bool {
 	for i := range arr {
 		if !strings.HasPrefix(v, arr[i]) {
 			return false
@@ -213,7 +179,7 @@ func _stringPrefix(v string, arr []string) bool {
 	return true
 }
 
-func _stringSuffix(v string, arr []string) bool {
+func _stringSuffixListString(v string, arr []string) bool {
 	for i := range arr {
 		if !strings.HasSuffix(v, arr[i]) {
 			return false
@@ -231,24 +197,18 @@ func (s *StringJudge) Suffix(left interface{}, right IFiled) (bool, error) {
 	case TypeValueString:
 		return strings.HasSuffix(leftValue, right.Value().(string)), nil
 	case TypeValueBoolean:
-		return false, ErrInvalidOperator
 	case TypeValueNull:
-		return false, ErrInvalidOperator
 	case TypeValueDouble:
-		return false, ErrInvalidOperator
 	case TypeValueInteger:
-		return false, ErrInvalidOperator
 	case TypeValueListStrings:
-		return _stringSuffix(leftValue, right.Value().([]string)), nil
+		return _stringSuffixListString(leftValue, right.Value().([]string)), nil
 	case TypeValueListDoubles:
-		return false, ErrInvalidOperator
 	case TypeValueListIntegers:
-		return false, ErrInvalidOperator
 	}
 	return false, ErrInvalidType
 }
 
-func _stringRegex(v string, arr []string) bool {
+func _stringRegexListString(v string, arr []string) bool {
 	for i := range arr {
 		b, _ := regexp.MatchString(v, arr[i])
 		if !b {
@@ -269,19 +229,13 @@ func (s *StringJudge) Regex(left interface{}, right IFiled) (bool, error) {
 		// right is pattern
 		return regexp.MatchString(right.Value().(string), leftValue)
 	case TypeValueBoolean:
-		return false, ErrInvalidOperator
 	case TypeValueNull:
-		return false, ErrInvalidOperator
 	case TypeValueDouble:
-		return false, ErrInvalidOperator
 	case TypeValueInteger:
-		return false, ErrInvalidOperator
 	case TypeValueListStrings:
-		return _stringRegex(leftValue, right.Value().([]string)), nil
+		return _stringRegexListString(leftValue, right.Value().([]string)), nil
 	case TypeValueListDoubles:
-		return false, ErrInvalidOperator
 	case TypeValueListIntegers:
-		return false, ErrInvalidOperator
 	}
 	return false, ErrInvalidType
 }
@@ -293,17 +247,13 @@ func (s *StringJudge) In(left interface{}, right IFiled) (bool, error) {
 	}
 	switch right.Type() {
 	case TypeValueString:
-		return false, ErrInvalidOperator
+		return leftValue == right.Value().(string), nil
 	case TypeValueBoolean:
-		return false, ErrInvalidOperator
 	case TypeValueNull:
-		return false, ErrInvalidOperator
 	case TypeValueDouble:
-		return false, ErrInvalidOperator
 	case TypeValueInteger:
-		return false, ErrInvalidOperator
 	case TypeValueListStrings:
-		return _stringIn(leftValue, right.Value().([]string)), nil
+		return _stringInListString(leftValue, right.Value().([]string)), nil
 	case TypeValueListDoubles:
 		return false, ErrInvalidOperator
 	case TypeValueListIntegers:
@@ -312,7 +262,7 @@ func (s *StringJudge) In(left interface{}, right IFiled) (bool, error) {
 	return false, ErrInvalidType
 }
 
-func _stringIn(v string, arr []string) bool {
+func _stringInListString(v string, arr []string) bool {
 	for i := range arr {
 		if v == arr[i] {
 			return true

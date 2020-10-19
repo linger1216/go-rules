@@ -1,6 +1,6 @@
 package rules
 
-func _listStringEQ(left, right []string) bool {
+func _listStringEQListString(left, right []string) bool {
 	if len(left) != len(right) {
 		return false
 	}
@@ -14,10 +14,11 @@ func _listStringEQ(left, right []string) bool {
 }
 
 // [a,b,c] [b,c]
-func _listStringContain(left, right []string) bool {
+
+func _listStringContainListString(left, right []string) bool {
 	// right的每一个元素都在left里
 	for i := range right {
-		if !_stringIn(right[i], left) {
+		if !_stringInListString(right[i], left) {
 			return false
 		}
 	}
@@ -25,36 +26,36 @@ func _listStringContain(left, right []string) bool {
 }
 
 // [a,b,c] [b,c]
-func _listStringPrefix(left, right []string) bool {
+func _listStringPrefixListString(left, right []string) bool {
 	for i := range left {
-		if !_stringPrefix(left[i], right) {
+		if !_stringPrefixListString(left[i], right) {
 			return false
 		}
 	}
 	return true
 }
 
-func _listStringSuffix(left, right []string) bool {
+func _listStringSuffixListString(left, right []string) bool {
 	for i := range left {
-		if !_stringSuffix(left[i], right) {
+		if !_stringSuffixListString(left[i], right) {
 			return false
 		}
 	}
 	return true
 }
 
-func _listStringRegex(left, right []string) bool {
+func _listStringRegexListString(left, right []string) bool {
 	for i := range left {
-		if !_stringRegex(left[i], right) {
+		if !_stringRegexListString(left[i], right) {
 			return false
 		}
 	}
 	return true
 }
 
-func _listStringIn(left, right []string) bool {
+func _listStringInListString(left, right []string) bool {
 	for i := range left {
-		if !_stringIn(left[i], right) {
+		if !_stringInListString(left[i], right) {
 			return false
 		}
 	}
@@ -72,21 +73,15 @@ func (s *ListStringJudge) EQ(left interface{}, right IFiled) (bool, error) {
 
 	switch right.Type() {
 	case TypeValueString:
-		return false, ErrInvalidOperator
 	case TypeValueBoolean:
-		return false, ErrInvalidOperator
 	case TypeValueNull:
 		return len(leftValue) == 0, nil
 	case TypeValueDouble:
-		return false, ErrInvalidOperator
 	case TypeValueInteger:
-		return false, ErrInvalidOperator
 	case TypeValueListStrings:
-		return _listStringEQ(leftValue, right.Value().([]string)), nil
+		return _listStringEQListString(leftValue, right.Value().([]string)), nil
 	case TypeValueListDoubles:
-		return false, ErrInvalidOperator
 	case TypeValueListIntegers:
-		return false, ErrInvalidOperator
 	}
 	return false, ErrInvalidType
 }
@@ -99,21 +94,15 @@ func (s *ListStringJudge) NE(left interface{}, right IFiled) (bool, error) {
 
 	switch right.Type() {
 	case TypeValueString:
-		return false, ErrInvalidOperator
 	case TypeValueBoolean:
-		return false, ErrInvalidOperator
 	case TypeValueNull:
 		return len(leftValue) == 0, nil
 	case TypeValueDouble:
-		return false, ErrInvalidOperator
 	case TypeValueInteger:
-		return false, ErrInvalidOperator
 	case TypeValueListStrings:
-		return !_listStringEQ(leftValue, right.Value().([]string)), nil
+		return !_listStringEQListString(leftValue, right.Value().([]string)), nil
 	case TypeValueListDoubles:
-		return false, ErrInvalidOperator
 	case TypeValueListIntegers:
-		return false, ErrInvalidOperator
 	}
 	return false, ErrInvalidType
 }
@@ -142,21 +131,15 @@ func (s *ListStringJudge) Contain(left interface{}, right IFiled) (bool, error) 
 
 	switch right.Type() {
 	case TypeValueString:
-		return false, ErrInvalidOperator
+		return _stringInListString(right.Value().(string), leftValue), nil
 	case TypeValueBoolean:
-		return false, ErrInvalidOperator
 	case TypeValueNull:
-		return len(leftValue) == 0, nil
 	case TypeValueDouble:
-		return false, ErrInvalidOperator
 	case TypeValueInteger:
-		return false, ErrInvalidOperator
 	case TypeValueListStrings:
-		return !_listStringContain(leftValue, right.Value().([]string)), nil
+		return _listStringContainListString(leftValue, right.Value().([]string)), nil
 	case TypeValueListDoubles:
-		return false, ErrInvalidOperator
 	case TypeValueListIntegers:
-		return false, ErrInvalidOperator
 	}
 	return false, ErrInvalidType
 }
@@ -169,21 +152,14 @@ func (s *ListStringJudge) Prefix(left interface{}, right IFiled) (bool, error) {
 
 	switch right.Type() {
 	case TypeValueString:
-		return false, ErrInvalidOperator
 	case TypeValueBoolean:
-		return false, ErrInvalidOperator
 	case TypeValueNull:
-		return len(leftValue) == 0, nil
 	case TypeValueDouble:
-		return false, ErrInvalidOperator
 	case TypeValueInteger:
-		return false, ErrInvalidOperator
 	case TypeValueListStrings:
-		return !_listStringPrefix(leftValue, right.Value().([]string)), nil
+		return !_listStringPrefixListString(leftValue, right.Value().([]string)), nil
 	case TypeValueListDoubles:
-		return false, ErrInvalidOperator
 	case TypeValueListIntegers:
-		return false, ErrInvalidOperator
 	}
 	return false, ErrInvalidType
 }
@@ -196,21 +172,14 @@ func (s *ListStringJudge) Suffix(left interface{}, right IFiled) (bool, error) {
 
 	switch right.Type() {
 	case TypeValueString:
-		return false, ErrInvalidOperator
 	case TypeValueBoolean:
-		return false, ErrInvalidOperator
 	case TypeValueNull:
-		return len(leftValue) == 0, nil
 	case TypeValueDouble:
-		return false, ErrInvalidOperator
 	case TypeValueInteger:
-		return false, ErrInvalidOperator
 	case TypeValueListStrings:
-		return !_listStringSuffix(leftValue, right.Value().([]string)), nil
+		return !_listStringSuffixListString(leftValue, right.Value().([]string)), nil
 	case TypeValueListDoubles:
-		return false, ErrInvalidOperator
 	case TypeValueListIntegers:
-		return false, ErrInvalidOperator
 	}
 	return false, ErrInvalidType
 }
@@ -223,21 +192,14 @@ func (s *ListStringJudge) Regex(left interface{}, right IFiled) (bool, error) {
 
 	switch right.Type() {
 	case TypeValueString:
-		return false, ErrInvalidOperator
 	case TypeValueBoolean:
-		return false, ErrInvalidOperator
 	case TypeValueNull:
-		return len(leftValue) == 0, nil
 	case TypeValueDouble:
-		return false, ErrInvalidOperator
 	case TypeValueInteger:
-		return false, ErrInvalidOperator
 	case TypeValueListStrings:
-		return !_listStringRegex(leftValue, right.Value().([]string)), nil
+		return !_listStringRegexListString(leftValue, right.Value().([]string)), nil
 	case TypeValueListDoubles:
-		return false, ErrInvalidOperator
 	case TypeValueListIntegers:
-		return false, ErrInvalidOperator
 	}
 	return false, ErrInvalidType
 }
@@ -250,21 +212,14 @@ func (s *ListStringJudge) In(left interface{}, right IFiled) (bool, error) {
 
 	switch right.Type() {
 	case TypeValueString:
-		return false, ErrInvalidOperator
 	case TypeValueBoolean:
-		return false, ErrInvalidOperator
 	case TypeValueNull:
-		return len(leftValue) == 0, nil
 	case TypeValueDouble:
-		return false, ErrInvalidOperator
 	case TypeValueInteger:
-		return false, ErrInvalidOperator
 	case TypeValueListStrings:
-		return !_listStringIn(leftValue, right.Value().([]string)), nil
+		return !_listStringInListString(leftValue, right.Value().([]string)), nil
 	case TypeValueListDoubles:
-		return false, ErrInvalidOperator
 	case TypeValueListIntegers:
-		return false, ErrInvalidOperator
 	}
 	return false, ErrInvalidType
 }

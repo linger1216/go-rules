@@ -3,7 +3,7 @@ package rules
 type ListFloatJudge struct {
 }
 
-func _listFloatListIntegerEQ(left []float64, right []int64) bool {
+func _listFloatEQListInteger(left []float64, right []int64) bool {
 	if len(left) != len(right) {
 		return false
 	}
@@ -15,7 +15,7 @@ func _listFloatListIntegerEQ(left []float64, right []int64) bool {
 	return true
 }
 
-func _listFloatListFloatEQ(left []float64, right []float64) bool {
+func _listFloatEQListFloat(left []float64, right []float64) bool {
 	if len(left) != len(right) {
 		return false
 	}
@@ -35,21 +35,16 @@ func (s *ListFloatJudge) EQ(left interface{}, right IFiled) (bool, error) {
 
 	switch right.Type() {
 	case TypeValueString:
-		return false, ErrInvalidOperator
 	case TypeValueBoolean:
-		return false, ErrInvalidOperator
 	case TypeValueNull:
-		return len(leftValue) == 0, nil
+		return len(leftValue) > 0, nil
 	case TypeValueDouble:
-		return false, ErrInvalidOperator
 	case TypeValueInteger:
-		return false, ErrInvalidOperator
 	case TypeValueListStrings:
-		return false, ErrInvalidOperator
 	case TypeValueListDoubles:
-		return _listFloatListFloatEQ(leftValue, right.Value().([]float64)), nil
+		return _listFloatEQListFloat(leftValue, right.Value().([]float64)), nil
 	case TypeValueListIntegers:
-		return _listFloatListIntegerEQ(leftValue, right.Value().([]int64)), nil
+		return _listFloatEQListInteger(leftValue, right.Value().([]int64)), nil
 	}
 	return false, ErrInvalidType
 }
@@ -62,21 +57,16 @@ func (s *ListFloatJudge) NE(left interface{}, right IFiled) (bool, error) {
 
 	switch right.Type() {
 	case TypeValueString:
-		return false, ErrInvalidOperator
 	case TypeValueBoolean:
-		return false, ErrInvalidOperator
 	case TypeValueNull:
 		return len(leftValue) == 0, nil
 	case TypeValueDouble:
-		return false, ErrInvalidOperator
 	case TypeValueInteger:
-		return false, ErrInvalidOperator
 	case TypeValueListStrings:
-		return false, ErrInvalidOperator
 	case TypeValueListDoubles:
-		return !_listFloatListFloatEQ(leftValue, right.Value().([]float64)), nil
+		return !_listFloatEQListFloat(leftValue, right.Value().([]float64)), nil
 	case TypeValueListIntegers:
-		return !_listFloatListIntegerEQ(leftValue, right.Value().([]int64)), nil
+		return !_listFloatEQListInteger(leftValue, right.Value().([]int64)), nil
 	}
 	return false, ErrInvalidType
 }
@@ -89,21 +79,15 @@ func (s *ListFloatJudge) GT(left interface{}, right IFiled) (bool, error) {
 
 	switch right.Type() {
 	case TypeValueString:
-		return false, ErrInvalidOperator
 	case TypeValueBoolean:
-		return false, ErrInvalidOperator
 	case TypeValueNull:
-		return len(leftValue) == 0, nil
 	case TypeValueDouble:
-		return false, ErrInvalidOperator
 	case TypeValueInteger:
-		return false, ErrInvalidOperator
 	case TypeValueListStrings:
-		return false, ErrInvalidOperator
 	case TypeValueListDoubles:
-		return !_listFloatListFloatGT(leftValue, right.Value().([]float64)), nil
+		return !_listFloatGTListFloat(leftValue, right.Value().([]float64)), nil
 	case TypeValueListIntegers:
-		return !_listFloatListIntegerGT(leftValue, right.Value().([]int64)), nil
+		return !_listFloatGTListInteger(leftValue, right.Value().([]int64)), nil
 	}
 	return false, ErrInvalidType
 }
@@ -116,21 +100,15 @@ func (s *ListFloatJudge) GE(left interface{}, right IFiled) (bool, error) {
 
 	switch right.Type() {
 	case TypeValueString:
-		return false, ErrInvalidOperator
 	case TypeValueBoolean:
-		return false, ErrInvalidOperator
 	case TypeValueNull:
-		return len(leftValue) == 0, nil
 	case TypeValueDouble:
-		return false, ErrInvalidOperator
 	case TypeValueInteger:
-		return false, ErrInvalidOperator
 	case TypeValueListStrings:
-		return false, ErrInvalidOperator
 	case TypeValueListDoubles:
-		return !_listFloatListFloatGE(leftValue, right.Value().([]float64)), nil
+		return !_listFloatGEListFloat(leftValue, right.Value().([]float64)), nil
 	case TypeValueListIntegers:
-		return !_listFloatListIntegerGE(leftValue, right.Value().([]int64)), nil
+		return !_listFloatGEListInteger(leftValue, right.Value().([]int64)), nil
 	}
 	return false, ErrInvalidType
 }
@@ -143,21 +121,15 @@ func (s *ListFloatJudge) LT(left interface{}, right IFiled) (bool, error) {
 
 	switch right.Type() {
 	case TypeValueString:
-		return false, ErrInvalidOperator
 	case TypeValueBoolean:
-		return false, ErrInvalidOperator
 	case TypeValueNull:
-		return len(leftValue) == 0, nil
 	case TypeValueDouble:
-		return false, ErrInvalidOperator
 	case TypeValueInteger:
-		return false, ErrInvalidOperator
 	case TypeValueListStrings:
-		return false, ErrInvalidOperator
 	case TypeValueListDoubles:
-		return !_listFloatListFloatLT(leftValue, right.Value().([]float64)), nil
+		return !_listFloatLTListFloat(leftValue, right.Value().([]float64)), nil
 	case TypeValueListIntegers:
-		return !_listFloatListIntegerLT(leftValue, right.Value().([]int64)), nil
+		return !_listFloatLTListInteger(leftValue, right.Value().([]int64)), nil
 	}
 	return false, ErrInvalidType
 }
@@ -170,21 +142,15 @@ func (s *ListFloatJudge) LE(left interface{}, right IFiled) (bool, error) {
 
 	switch right.Type() {
 	case TypeValueString:
-		return false, ErrInvalidOperator
 	case TypeValueBoolean:
-		return false, ErrInvalidOperator
 	case TypeValueNull:
-		return false, ErrInvalidOperator
 	case TypeValueDouble:
-		return _listFloatFloatLE(right.Value().(float64), leftValue), nil
 	case TypeValueInteger:
-		return _integerListFloatIn(right.Value().(int64), leftValue), nil
 	case TypeValueListStrings:
-		return false, ErrInvalidOperator
 	case TypeValueListDoubles:
-		return !_listFloatListFloatLE(leftValue, right.Value().([]float64)), nil
+		return _listFloatLEListFloat(leftValue, right.Value().([]float64)), nil
 	case TypeValueListIntegers:
-		return !_listFloatListIntegerLE(leftValue, right.Value().([]int64)), nil
+		return _listFloatLEListInteger(leftValue, right.Value().([]int64)), nil
 	}
 	return false, ErrInvalidType
 }
@@ -200,14 +166,14 @@ func (s *ListFloatJudge) Contain(left interface{}, right IFiled) (bool, error) {
 	case TypeValueBoolean:
 	case TypeValueNull:
 	case TypeValueDouble:
-		return _floatListFloatIn(right.Value().(float64), leftValue), nil
+		return _floatInListFloat(right.Value().(float64), leftValue), nil
 	case TypeValueInteger:
-		return _integerListFloatIn(right.Value().(int64), leftValue), nil
+		return _integerInListFloat(right.Value().(int64), leftValue), nil
 	case TypeValueListStrings:
 	case TypeValueListDoubles:
-		return !_listFloatListFloatContain(leftValue, right.Value().([]float64)), nil
+		return _listFloatContainListFloat(leftValue, right.Value().([]float64)), nil
 	case TypeValueListIntegers:
-		return !_listFloatListIntegerContain(leftValue, right.Value().([]int64)), nil
+		return _listFloatContainListInteger(leftValue, right.Value().([]int64)), nil
 	}
 	return false, ErrInvalidType
 }
@@ -237,14 +203,14 @@ func (s *ListFloatJudge) In(left interface{}, right IFiled) (bool, error) {
 	case TypeValueInteger:
 	case TypeValueListStrings:
 	case TypeValueListDoubles:
-		return !_listFloatListFloatIn(leftValue, right.Value().([]float64)), nil
+		return _listFloatInListFloat(leftValue, right.Value().([]float64)), nil
 	case TypeValueListIntegers:
-		return !_listFloatListIntegerIn(leftValue, right.Value().([]int64)), nil
+		return _listFloatInListInteger(leftValue, right.Value().([]int64)), nil
 	}
 	return false, ErrInvalidType
 }
 
-func _listFloatListIntegerGT(left []float64, right []int64) bool {
+func _listFloatGTListInteger(left []float64, right []int64) bool {
 	for i := range left {
 		if left[i] <= float64(right[i]) {
 			return false
@@ -253,7 +219,7 @@ func _listFloatListIntegerGT(left []float64, right []int64) bool {
 	return true
 }
 
-func _listFloatListFloatGT(left []float64, right []float64) bool {
+func _listFloatGTListFloat(left []float64, right []float64) bool {
 	for i := range left {
 		if left[i] <= right[i] {
 			return false
@@ -262,7 +228,7 @@ func _listFloatListFloatGT(left []float64, right []float64) bool {
 	return true
 }
 
-func _listFloatListIntegerGE(left []float64, right []int64) bool {
+func _listFloatGEListInteger(left []float64, right []int64) bool {
 	for i := range left {
 		if left[i] < float64(right[i]) {
 			return false
@@ -271,7 +237,7 @@ func _listFloatListIntegerGE(left []float64, right []int64) bool {
 	return true
 }
 
-func _listFloatListFloatGE(left []float64, right []float64) bool {
+func _listFloatGEListFloat(left []float64, right []float64) bool {
 	for i := range left {
 		if left[i] < right[i] {
 			return false
@@ -280,7 +246,7 @@ func _listFloatListFloatGE(left []float64, right []float64) bool {
 	return true
 }
 
-func _listFloatListIntegerLT(left []float64, right []int64) bool {
+func _listFloatLTListInteger(left []float64, right []int64) bool {
 	for i := range left {
 		if left[i] >= float64(right[i]) {
 			return false
@@ -289,7 +255,7 @@ func _listFloatListIntegerLT(left []float64, right []int64) bool {
 	return true
 }
 
-func _listFloatListFloatLT(left []float64, right []float64) bool {
+func _listFloatLTListFloat(left []float64, right []float64) bool {
 	for i := range left {
 		if left[i] >= right[i] {
 			return false
@@ -298,7 +264,7 @@ func _listFloatListFloatLT(left []float64, right []float64) bool {
 	return true
 }
 
-func _listFloatListIntegerLE(left []float64, right []int64) bool {
+func _listFloatLEListInteger(left []float64, right []int64) bool {
 	for i := range left {
 		if left[i] > float64(right[i]) {
 			return false
@@ -307,7 +273,7 @@ func _listFloatListIntegerLE(left []float64, right []int64) bool {
 	return true
 }
 
-func _listFloatListFloatLE(left []float64, right []float64) bool {
+func _listFloatLEListFloat(left []float64, right []float64) bool {
 	for i := range left {
 		if left[i] > right[i] {
 			return false
@@ -316,38 +282,38 @@ func _listFloatListFloatLE(left []float64, right []float64) bool {
 	return true
 }
 
-func _listFloatListIntegerContain(left []float64, right []int64) bool {
+func _listFloatContainListInteger(left []float64, right []int64) bool {
 	// right的每一个元素都在left里
 	for i := range right {
-		if !_integerListFloatIn(right[i], left) {
+		if !_integerInListFloat(right[i], left) {
 			return false
 		}
 	}
 	return true
 }
 
-func _listFloatListFloatContain(left []float64, right []float64) bool {
+func _listFloatContainListFloat(left []float64, right []float64) bool {
 	// right的每一个元素都在left里
 	for i := range right {
-		if !_floatListFloatIn(right[i], left) {
+		if !_floatInListFloat(right[i], left) {
 			return false
 		}
 	}
 	return true
 }
 
-func _listFloatListIntegerIn(left []float64, right []int64) bool {
+func _listFloatInListInteger(left []float64, right []int64) bool {
 	for i := range left {
-		if !_floatListIntegerIn(left[i], right) {
+		if !_floatInListInteger(left[i], right) {
 			return false
 		}
 	}
 	return true
 }
 
-func _listFloatListFloatIn(left []float64, right []float64) bool {
+func _listFloatInListFloat(left []float64, right []float64) bool {
 	for i := range left {
-		if !_floatListFloatIn(left[i], right) {
+		if !_floatInListFloat(left[i], right) {
 			return false
 		}
 	}
