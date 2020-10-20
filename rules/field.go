@@ -406,23 +406,23 @@ func (o *ValueLisIntegers) Value() interface{} {
 	return integers
 }
 
-type ValueListDoubles struct {
+type ValueListFloats struct {
 	text string
 }
 
-func NewValueListDoubles(text string) *ValueListDoubles {
-	return &ValueListDoubles{text: text}
+func NewValueListFloats(text string) *ValueListFloats {
+	return &ValueListFloats{text: text}
 }
 
-func (o *ValueListDoubles) Type() FieldType {
+func (o *ValueListFloats) Type() FieldType {
 	return TypeValueListDoubles
 }
 
-func (o *ValueListDoubles) Raw() string {
+func (o *ValueListFloats) Raw() string {
 	return o.text
 }
 
-func (o *ValueListDoubles) Value() interface{} {
+func (o *ValueListFloats) Value() interface{} {
 	tmp := o.text[1 : len(o.text)-1]
 	arr := strings.Split(tmp, ",")
 	doubles := make([]float64, len(arr))
@@ -474,33 +474,32 @@ func (o *ValueInteger) Value() interface{} {
 	return ret
 }
 
-type ValueDouble struct {
+type ValueFloat struct {
 	text string
 }
 
-func NewValueDouble(text string) *ValueDouble {
-	return &ValueDouble{text: text}
+func NewValueFloat(text string) *ValueFloat {
+	return &ValueFloat{text: text}
 }
 
-func (o *ValueDouble) Type() FieldType {
+func (o *ValueFloat) Type() FieldType {
 	return TypeValueDouble
 }
 
-func (o *ValueDouble) Raw() string {
+func (o *ValueFloat) Raw() string {
 	return o.text
 }
 
-func (o *ValueDouble) Value() interface{} {
+func (o *ValueFloat) Value() interface{} {
 	ret, _ := strconv.ParseFloat(o.text, 64)
 	return ret
 }
 
 type ValueNull struct {
-	text string
 }
 
-func NewValueNull(text string) *ValueNull {
-	return &ValueNull{text: text}
+func NewValueNull() *ValueNull {
+	return &ValueNull{}
 }
 
 func (o *ValueNull) Type() FieldType {
@@ -508,11 +507,11 @@ func (o *ValueNull) Type() FieldType {
 }
 
 func (o *ValueNull) Raw() string {
-	return o.text
+	return ""
 }
 
 func (o *ValueNull) Value() interface{} {
-	return o.text
+	return ""
 }
 
 type ValueBoolean struct {

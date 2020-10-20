@@ -34,11 +34,14 @@ subAttr
    ;
 
 ATTRNAME
-   : ALPHA ATTR_NAME_CHAR* ;
+   : ALPHA ATTR_NAME_CHAR* INDEX?;
 
 fragment ATTR_NAME_CHAR
    : '-' | '_' | ':' | DIGIT | ALPHA
    ;
+
+INDEX
+   : '[' DIGIT ']';
 
 fragment DIGIT
    : ('0'..'9')

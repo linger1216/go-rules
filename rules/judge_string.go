@@ -138,7 +138,7 @@ func (s *StringJudge) Contain(left interface{}, right IFiled) (bool, error) {
 
 	switch right.Type() {
 	case TypeValueString:
-		return leftValue == right.Value().(string), nil
+		return strings.Contains(leftValue, right.Value().(string)), nil
 	case TypeValueBoolean:
 	case TypeValueNull:
 	case TypeValueDouble:

@@ -85,7 +85,7 @@ func (s *ListIntegerJudge) GT(left interface{}, right IFiled) (bool, error) {
 	case TypeValueListDoubles:
 		return _listIntegerGTListFloat(leftValue, right.Value().([]float64)), nil
 	case TypeValueListIntegers:
-		return !_listIntegerGTListInteger(leftValue, right.Value().([]int64)), nil
+		return _listIntegerGTListInteger(leftValue, right.Value().([]int64)), nil
 	}
 	return false, ErrInvalidType
 }
@@ -106,7 +106,7 @@ func (s *ListIntegerJudge) GE(left interface{}, right IFiled) (bool, error) {
 	case TypeValueListDoubles:
 		return _listIntegerGEListFloat(leftValue, right.Value().([]float64)), nil
 	case TypeValueListIntegers:
-		return !_listIntegerGEListInteger(leftValue, right.Value().([]int64)), nil
+		return _listIntegerGEListInteger(leftValue, right.Value().([]int64)), nil
 	}
 	return false, ErrInvalidType
 }

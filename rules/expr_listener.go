@@ -7,14 +7,15 @@ import (
 	"strings"
 )
 
-type ExpressionListener struct {
+type ExprListener struct {
 	stack  *objStack
 	obj    map[string]interface{}
 	judges map[string]Judge
+	err    error
 }
 
-func NewExpressionListener(obj map[string]interface{}) *ExpressionListener {
-	ret := &ExpressionListener{&objStack{}, obj, make(map[string]Judge)}
+func NewExprListener(obj map[string]interface{}) *ExprListener {
+	ret := &ExprListener{&objStack{}, obj, make(map[string]Judge), nil}
 	ret.judges["string"] = &StringJudge{}
 	ret.judges["list_string"] = &ListStringJudge{}
 	ret.judges["float"] = &FloatJudge{}
@@ -25,7 +26,7 @@ func NewExpressionListener(obj map[string]interface{}) *ExpressionListener {
 	return ret
 }
 
-func (e *ExpressionListener) push(i IFiled) {
+func (e *ExprListener) push(i IFiled) {
 	if !e.stack.empty() && i.Type() == TypeAttr {
 		switch e.stack.peek().Type() {
 		case TypeAttr:
@@ -35,84 +36,101 @@ func (e *ExpressionListener) push(i IFiled) {
 	e.stack.push(i)
 }
 
-func (e *ExpressionListener) Result() bool {
-	res := e.stack.pop()
-	if res.Type() != TypeBoolean {
-		return false
+func (e *ExprListener) Result() (bool, error) {
+
+	if e.err != nil {
+		return false, e.err
 	}
-	return res.Value().(bool)
+
+	if !e.stack.empty() {
+		res := e.stack.pop()
+		if res.Type() != TypeBoolean {
+			return false, ErrInvalidType
+		}
+		return res.Value().(bool), nil
+	}
+	return false, ErrInvalidType
 }
 
-func (e *ExpressionListener) VisitTerminal(node antlr.TerminalNode) {
+func (e *ExprListener) VisitTerminal(node antlr.TerminalNode) {
 }
 
-func (e *ExpressionListener) VisitErrorNode(node antlr.ErrorNode) {
+func (e *ExprListener) VisitErrorNode(node antlr.ErrorNode) {
 }
 
-func (e *ExpressionListener) EnterEveryRule(ctx antlr.ParserRuleContext) {
+func (e *ExprListener) EnterEveryRule(ctx antlr.ParserRuleContext) {
 }
 
-func (e *ExpressionListener) ExitEveryRule(ctx antlr.ParserRuleContext) {
+func (e *ExprListener) ExitEveryRule(ctx antlr.ParserRuleContext) {
 }
 
-func (e *ExpressionListener) EnterCompareExp(c *parser.CompareExpContext) {
+func (e *ExprListener) EnterCompareExp(c *parser.CompareExpContext) {
 }
 
-func (e *ExpressionListener) EnterParenExp(c *parser.ParenExpContext) {
+func (e *ExprListener) EnterParenExp(c *parser.ParenExpContext) {
 }
 
-func (e *ExpressionListener) EnterLogicalExp(c *parser.LogicalExpContext) {
+func (e *ExprListener) EnterLogicalExp(c *parser.LogicalExpContext) {
 }
 
-func (e *ExpressionListener) EnterAttrPath(c *parser.AttrPathContext) {
+func (e *ExprListener) EnterAttrPath(c *parser.AttrPathContext) {
 }
 
-func (e *ExpressionListener) EnterSubAttr(c *parser.SubAttrContext) {
+func (e *ExprListener) EnterSubAttr(c *parser.SubAttrContext) {
 }
 
-func (e *ExpressionListener) EnterBoolean(c *parser.BooleanContext) {
+func (e *ExprListener) EnterBoolean(c *parser.BooleanContext) {
 }
 
-func (e *ExpressionListener) EnterNull(c *parser.NullContext) {
+func (e *ExprListener) EnterNull(c *parser.NullContext) {
 }
 
-func (e *ExpressionListener) EnterString(c *parser.StringContext) {
+func (e *ExprListener) EnterString(c *parser.StringContext) {
 }
 
-func (e *ExpressionListener) EnterDouble(c *parser.DoubleContext) {
+func (e *ExprListener) EnterDouble(c *parser.DoubleContext) {
 }
 
-func (e *ExpressionListener) EnterInteger(c *parser.IntegerContext) {
+func (e *ExprListener) EnterInteger(c *parser.IntegerContext) {
 }
 
-func (e *ExpressionListener) EnterListOfIntegers(c *parser.ListOfIntegersContext) {
+func (e *ExprListener) EnterListOfIntegers(c *parser.ListOfIntegersContext) {
 }
 
-func (e *ExpressionListener) EnterListOfDoubles(c *parser.ListOfDoublesContext) {
+func (e *ExprListener) EnterListOfDoubles(c *parser.ListOfDoublesContext) {
 }
 
-func (e *ExpressionListener) EnterListOfStrings(c *parser.ListOfStringsContext) {
+func (e *ExprListener) EnterListOfStrings(c *parser.ListOfStringsContext) {
 }
 
-func (e *ExpressionListener) EnterListStrings(c *parser.ListStringsContext) {
+func (e *ExprListener) EnterListStrings(c *parser.ListStringsContext) {
 }
 
-func (e *ExpressionListener) EnterSubListOfStrings(c *parser.SubListOfStringsContext) {
+func (e *ExprListener) EnterSubListOfStrings(c *parser.SubListOfStringsContext) {
 }
 
-func (e *ExpressionListener) EnterListDoubles(c *parser.ListDoublesContext) {
+func (e *ExprListener) EnterListDoubles(c *parser.ListDoublesContext) {
 }
 
-func (e *ExpressionListener) EnterSubListOfDoubles(c *parser.SubListOfDoublesContext) {
+func (e *ExprListener) EnterSubListOfDoubles(c *parser.SubListOfDoublesContext) {
 }
 
-func (e *ExpressionListener) EnterListIntegers(c *parser.ListIntegersContext) {
+func (e *ExprListener) EnterListIntegers(c *parser.ListIntegersContext) {
 }
 
-func (e *ExpressionListener) EnterSubListOfIntegers(c *parser.SubListOfIntegersContext) {
+func (e *ExprListener) EnterSubListOfIntegers(c *parser.SubListOfIntegersContext) {
 }
 
-func (e *ExpressionListener) ExitCompareExp(c *parser.CompareExpContext) {
+func (e *ExprListener) ExitCompareExp(c *parser.CompareExpContext) {
+
+	if e.stack.empty() {
+		e.err = ErrInvalidRule
+	}
+
+	if e.err != nil {
+		return
+	}
+
 	right, left := e.stack.pop(), e.stack.pop()
 
 	var err error
@@ -120,7 +138,8 @@ func (e *ExpressionListener) ExitCompareExp(c *parser.CompareExpContext) {
 	if left.Type() == TypeAttr {
 		leftValue, err = GetProperty(e.obj, left.Value().(string))
 		if err != nil {
-			panic(err)
+			e.err = err
+			return
 		}
 	}
 
@@ -147,7 +166,8 @@ func (e *ExpressionListener) ExitCompareExp(c *parser.CompareExpContext) {
 
 	judge, ok := e.judges[typeName]
 	if !ok {
-		panic("not implement")
+		e.err = ErrInvalidOperator
+		return
 	}
 
 	var res bool
@@ -155,79 +175,59 @@ func (e *ExpressionListener) ExitCompareExp(c *parser.CompareExpContext) {
 	case parser.ExprLexerEQ:
 		fmt.Println("==")
 		res, err = judge.EQ(leftValue, right)
-		if err != nil {
-			panic(err)
-		}
 	case parser.ExprLexerNE:
 		fmt.Println("!=")
 		res, err = judge.NE(leftValue, right)
-		if err != nil {
-			panic(err)
-		}
 	case parser.ExprLexerGT:
 		fmt.Println(">")
 		res, err = judge.GT(leftValue, right)
-		if err != nil {
-			panic(err)
-		}
 	case parser.ExprLexerLT:
 		fmt.Println("<")
 		res, err = judge.LT(leftValue, right)
-		if err != nil {
-			panic(err)
-		}
 	case parser.ExprLexerGE:
 		fmt.Println(">=")
 		res, err = judge.GE(leftValue, right)
-		if err != nil {
-			panic(err)
-		}
 	case parser.ExprLexerLE:
 		fmt.Println("<=")
 		res, err = judge.LE(leftValue, right)
-		if err != nil {
-			panic(err)
-		}
 	case parser.ExprLexerCONTAIN:
 		fmt.Println("contain")
 		res, err = judge.Contain(leftValue, right)
-		if err != nil {
-			panic(err)
-		}
 	case parser.ExprLexerPREFIX:
 		fmt.Println("prefix")
 		res, err = judge.Prefix(leftValue, right)
-		if err != nil {
-			panic(err)
-		}
-		e.push(NewResultBoolean(res))
 	case parser.ExprLexerREGEX:
 		fmt.Println("regex")
 		res, err = judge.Regex(leftValue, right)
-		if err != nil {
-			panic(err)
-		}
 	case parser.ExprLexerIN:
 		fmt.Println("in")
 		res, err = judge.In(leftValue, right)
-		if err != nil {
-			panic(err)
-		}
 	case parser.ExprLexerSUFFIX:
 		fmt.Println("suffix")
 		res, err = judge.Suffix(leftValue, right)
-		if err != nil {
-			panic(err)
-		}
 	}
+
+	if err != nil {
+		e.err = err
+		return
+	}
+
 	e.push(NewResultBoolean(res))
 }
 
-func (e *ExpressionListener) ExitParenExp(c *parser.ParenExpContext) {
+func (e *ExprListener) ExitParenExp(c *parser.ParenExpContext) {
 }
 
-func (e *ExpressionListener) ExitLogicalExp(c *parser.LogicalExpContext) {
-	//left, right
+func (e *ExprListener) ExitLogicalExp(c *parser.LogicalExpContext) {
+
+	if e.stack.empty() {
+		e.err = ErrInvalidRule
+	}
+
+	if e.err != nil {
+		return
+	}
+
 	fmt.Println(c.LOGICAL_OPERATOR().GetText())
 	var res bool
 	right, left := e.stack.pop(), e.stack.pop()
@@ -242,68 +242,95 @@ func (e *ExpressionListener) ExitLogicalExp(c *parser.LogicalExpContext) {
 	e.push(NewResultBoolean(res))
 }
 
-func (e *ExpressionListener) ExitAttrPath(c *parser.AttrPathContext) {
+func (e *ExprListener) ExitAttrPath(c *parser.AttrPathContext) {
 	fmt.Println("ExitAttrPath:", c.GetText())
+	if e.err != nil {
+		return
+	}
 	e.push(NewAttr(c.GetText()))
 }
 
-func (e *ExpressionListener) ExitSubAttr(c *parser.SubAttrContext) {
+func (e *ExprListener) ExitSubAttr(c *parser.SubAttrContext) {
 }
 
-func (e *ExpressionListener) ExitBoolean(c *parser.BooleanContext) {
+func (e *ExprListener) ExitBoolean(c *parser.BooleanContext) {
 	fmt.Println("ExitBoolean:", c.GetText())
+	if e.err != nil {
+		return
+	}
 	e.push(NewValueBoolean(c.GetText()))
 }
 
-func (e *ExpressionListener) ExitNull(c *parser.NullContext) {
+func (e *ExprListener) ExitNull(c *parser.NullContext) {
 	fmt.Println("ExitNull:", c.GetText())
-	e.push(NewValueNull(c.GetText()))
+	if e.err != nil {
+		return
+	}
+	e.push(NewValueNull())
 }
 
-func (e *ExpressionListener) ExitString(c *parser.StringContext) {
+func (e *ExprListener) ExitString(c *parser.StringContext) {
 	fmt.Println("ExitString:", c.GetText())
+	if e.err != nil {
+		return
+	}
 	e.push(NewValueString(c.GetText()))
 }
 
-func (e *ExpressionListener) ExitDouble(c *parser.DoubleContext) {
+func (e *ExprListener) ExitDouble(c *parser.DoubleContext) {
 	fmt.Println("ExitDouble:", c.GetText())
-	e.push(NewValueDouble(c.GetText()))
+	if e.err != nil {
+		return
+	}
+	e.push(NewValueFloat(c.GetText()))
 }
 
-func (e *ExpressionListener) ExitInteger(c *parser.IntegerContext) {
+func (e *ExprListener) ExitInteger(c *parser.IntegerContext) {
 	fmt.Println("ExitInteger:", c.GetText())
+	if e.err != nil {
+		return
+	}
 	e.push(NewValueInteger(c.GetText()))
 }
 
-func (e *ExpressionListener) ExitListStrings(c *parser.ListStringsContext) {
+func (e *ExprListener) ExitListStrings(c *parser.ListStringsContext) {
 	fmt.Println("ExitListStrings:", c.GetText())
+	if e.err != nil {
+		return
+	}
 	e.push(NewValueListStrings(c.GetText()))
 }
 
-func (e *ExpressionListener) ExitListDoubles(c *parser.ListDoublesContext) {
+func (e *ExprListener) ExitListDoubles(c *parser.ListDoublesContext) {
 	fmt.Println("ExitListDoubles:", c.GetText())
-	e.push(NewValueListDoubles(c.GetText()))
+	if e.err != nil {
+		return
+	}
+	e.push(NewValueListFloats(c.GetText()))
 }
 
-func (e *ExpressionListener) ExitListIntegers(c *parser.ListIntegersContext) {
+func (e *ExprListener) ExitListIntegers(c *parser.ListIntegersContext) {
 	fmt.Println("ExitListIntegers:", c.GetText())
+	if e.err != nil {
+		return
+	}
 	e.push(NewValueListIntegers(c.GetText()))
 }
 
-func (e *ExpressionListener) ExitListOfIntegers(c *parser.ListOfIntegersContext) {
+func (e *ExprListener) ExitListOfIntegers(c *parser.ListOfIntegersContext) {
 }
 
-func (e *ExpressionListener) ExitListOfDoubles(c *parser.ListOfDoublesContext) {
+func (e *ExprListener) ExitListOfDoubles(c *parser.ListOfDoublesContext) {
 }
 
-func (e *ExpressionListener) ExitListOfStrings(c *parser.ListOfStringsContext) {
+func (e *ExprListener) ExitListOfStrings(c *parser.ListOfStringsContext) {
 }
 
-func (e *ExpressionListener) ExitSubListOfStrings(c *parser.SubListOfStringsContext) {
+func (e *ExprListener) ExitSubListOfStrings(c *parser.SubListOfStringsContext) {
 }
 
-func (e *ExpressionListener) ExitSubListOfDoubles(c *parser.SubListOfDoublesContext) {
+func (e *ExprListener) ExitSubListOfDoubles(c *parser.SubListOfDoublesContext) {
 }
 
-func (e *ExpressionListener) ExitSubListOfIntegers(c *parser.SubListOfIntegersContext) {
+func (e *ExprListener) ExitSubListOfIntegers(c *parser.SubListOfIntegersContext) {
 }

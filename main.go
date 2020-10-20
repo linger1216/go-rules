@@ -2,26 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/antlr/antlr4/runtime/Go/antlr"
-	"github.com/linger1216/go-rules/parser"
 	"github.com/linger1216/go-rules/rules"
 )
 
 func main() {
 
-	//sourceStr := `my email is gerrylon@163.com`
-	//matched, _ := regexp.MatchString(`[\w-]+@[\w]+(?:\.[\w]+)+`, sourceStr)
-	//fmt.Printf("%v", matched) // true
-	// one.number == 4 and a.b.c regex "[1-9]?\\+" or z > 6 and (x IN [1,2,3])
-
-	// `number == 4`
-	// `list_number == 4`
-	// `string prefix "val"`
-	is := antlr.NewInputStream(`bool == false and number >= 4 and string prefix "val"`)
-	lexer := parser.NewExprLexer(is)
-	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
-
-	exprListener := rules.NewExpressionListener(map[string]interface{}{
+	m := map[string]interface{}{
 		"bool":   false,
 		"number": 4,
 		"list_number": []int64{
@@ -35,23 +21,75 @@ func main() {
 		"list_float": []float64{
 			3.1, 3.2, 3.3,
 		},
-		"two": map[string]interface{}{
-			"three": []string{
+
+		"m1": map[string]interface{}{
+			"bool":   false,
+			"number": 4,
+			"list_number": []int64{
+				1, 2, 3,
+			},
+			"string": "value",
+			"list_string": []string{
 				"aaa", "bbb", "ccc",
 			},
-		},
-		"four": map[string]interface{}{
-			"five": []int{
-				11, 22, 33,
+			"float": 3.1415,
+			"list_float": []float64{
+				3.1, 3.2, 3.3,
 			},
 		},
-	})
-	p := parser.NewExprParser(stream)
-	antlr.ParseTreeWalkerDefault.Walk(exprListener, p.Query())
-	//if exprListener.err != nil {
-	//	panic(error())
-	//}
+		"m2": map[string]interface{}{
+			"arr": []map[string]interface{}{
+				{
+					"bool2":   false,
+					"number2": 4,
+					"list_number2": []int64{
+						1, 2, 3,
+					},
+					"string2": "value",
+					"list_string2": []string{
+						"aaa", "bbb", "ccc",
+					},
+					"float2": 3.1415,
+					"list_float2": []float64{
+						3.1, 3.2, 3.3,
+					},
+				},
+				{
+					"bool3":   false,
+					"number3": 4,
+					"list_number3": []int64{
+						1, 2, 3,
+					},
+					"string3": "value",
+					"list_string3": []string{
+						"aaa", "bbb", "ccc",
+					},
+					"float3": 3.1415,
+					"list_float3": []float64{
+						3.1, 3.2, 3.3,
+					},
+				},
+			},
+		},
+	}
+
+	rule := `m2.arr[0].list_number2[0] == 1`
+
+	res, err := rules.Evaluate(rule, m)
+	if err != nil {
+		panic(err)
+	}
 	fmt.Println("*********************")
-	fmt.Println("result:", exprListener.Result())
+	fmt.Println("result1:", res)
+	fmt.Println("*********************")
+
+	p := rules.PrepareExprParser(rule)
+
+	res1, err := rules.EvaluateByParser(p, m)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("*********************")
+	fmt.Println("result2:", res1)
 	fmt.Println("*********************")
 }

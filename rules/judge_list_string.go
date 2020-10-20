@@ -96,7 +96,7 @@ func (s *ListStringJudge) NE(left interface{}, right IFiled) (bool, error) {
 	case TypeValueString:
 	case TypeValueBoolean:
 	case TypeValueNull:
-		return len(leftValue) == 0, nil
+		return len(leftValue) > 0, nil
 	case TypeValueDouble:
 	case TypeValueInteger:
 	case TypeValueListStrings:
@@ -157,7 +157,7 @@ func (s *ListStringJudge) Prefix(left interface{}, right IFiled) (bool, error) {
 	case TypeValueDouble:
 	case TypeValueInteger:
 	case TypeValueListStrings:
-		return !_listStringPrefixListString(leftValue, right.Value().([]string)), nil
+		return _listStringPrefixListString(leftValue, right.Value().([]string)), nil
 	case TypeValueListDoubles:
 	case TypeValueListIntegers:
 	}
@@ -177,7 +177,7 @@ func (s *ListStringJudge) Suffix(left interface{}, right IFiled) (bool, error) {
 	case TypeValueDouble:
 	case TypeValueInteger:
 	case TypeValueListStrings:
-		return !_listStringSuffixListString(leftValue, right.Value().([]string)), nil
+		return _listStringSuffixListString(leftValue, right.Value().([]string)), nil
 	case TypeValueListDoubles:
 	case TypeValueListIntegers:
 	}
@@ -217,7 +217,7 @@ func (s *ListStringJudge) In(left interface{}, right IFiled) (bool, error) {
 	case TypeValueDouble:
 	case TypeValueInteger:
 	case TypeValueListStrings:
-		return !_listStringInListString(leftValue, right.Value().([]string)), nil
+		return _listStringInListString(leftValue, right.Value().([]string)), nil
 	case TypeValueListDoubles:
 	case TypeValueListIntegers:
 	}
