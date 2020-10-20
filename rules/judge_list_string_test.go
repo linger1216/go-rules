@@ -75,6 +75,20 @@ func TestListStringJudge(t *testing.T) {
 			NewValueListStrings("[a,b,c]"),
 			true,
 		},
+
+		{
+			"regex",
+			[]string{"hello world"},
+			NewValueString("^hel+o"),
+			true,
+		},
+
+		{
+			"regex",
+			[]string{"hello world"},
+			NewValueListStrings("[^hel+o]"),
+			true,
+		},
 	}
 	s := &ListStringJudge{}
 	for i, tt := range tests {

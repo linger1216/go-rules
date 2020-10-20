@@ -44,9 +44,9 @@ func _listStringSuffixListString(left, right []string) bool {
 	return true
 }
 
-func _listStringRegexListString(left, right []string) bool {
-	for i := range left {
-		if !_stringRegexListString(left[i], right) {
+func _listStringRegexListString(text, pattern []string) bool {
+	for i := range text {
+		if !_stringRegexListString(text[i], pattern) {
 			return false
 		}
 	}
@@ -192,12 +192,13 @@ func (s *ListStringJudge) Regex(left interface{}, right IFiled) (bool, error) {
 
 	switch right.Type() {
 	case TypeValueString:
+		return _listStringRegexListString(leftValue, []string{right.Value().(string)}), nil
 	case TypeValueBoolean:
 	case TypeValueNull:
 	case TypeValueDouble:
 	case TypeValueInteger:
 	case TypeValueListStrings:
-		return !_listStringRegexListString(leftValue, right.Value().([]string)), nil
+		return _listStringRegexListString(leftValue, right.Value().([]string)), nil
 	case TypeValueListDoubles:
 	case TypeValueListIntegers:
 	}

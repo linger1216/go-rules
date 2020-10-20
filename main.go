@@ -92,4 +92,5 @@ func main() {
 	fmt.Println("*********************")
 	fmt.Println("result2:", res1)
 	fmt.Println("*********************")
+
 }

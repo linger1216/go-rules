@@ -208,9 +208,9 @@ func (s *StringJudge) Suffix(left interface{}, right IFiled) (bool, error) {
 	return false, ErrInvalidType
 }
 
-func _stringRegexListString(v string, arr []string) bool {
-	for i := range arr {
-		b, _ := regexp.MatchString(v, arr[i])
+func _stringRegexListString(text string, pattern []string) bool {
+	for i := range pattern {
+		b, _ := regexp.MatchString(pattern[i], text)
 		if !b {
 			return false
 		}
@@ -225,8 +225,6 @@ func (s *StringJudge) Regex(left interface{}, right IFiled) (bool, error) {
 	}
 	switch right.Type() {
 	case TypeValueString:
-		// a.b.c regex "[1-9]?\\+"
-		// right is pattern
 		return regexp.MatchString(right.Value().(string), leftValue)
 	case TypeValueBoolean:
 	case TypeValueNull:
