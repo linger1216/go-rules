@@ -21,12 +21,10 @@ func main() {
 		"arr": []string{"a", "b", "c"},
 	}
 
-	// `number == 4 and bool == false and string == "value" and float >= 3.1415`
-	//
-	rule := `obj.arr[0] == "a"`
+	rule := `number == 4 and bool == false and string == "value" and float >= 3.1415 and obj.arr[0] == "a"`
 	res, err := rules.Evaluate(rule, m)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("result1:", res)
+	fmt.Println("result:", res)
 }
