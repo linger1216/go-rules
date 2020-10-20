@@ -43,7 +43,11 @@ fragment ATTR_NAME_CHAR
    ;
 
 INDEX
-   : '[' DIGIT ']';
+   : '[' DIGITS ']';
+
+fragment DIGITS
+   : ('0'..'9')*
+   ;
 
 fragment DIGIT
    : ('0'..'9')

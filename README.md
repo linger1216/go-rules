@@ -25,7 +25,7 @@
 - `prefix`
 - `suffix`
 - `in`
-- `refex`
+- `regex`
 
 
 

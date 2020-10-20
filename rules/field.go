@@ -92,7 +92,7 @@ func (o *ValueLisIntegers) Value() interface{} {
 	arr := strings.Split(tmp, ",")
 	integers := make([]int64, len(arr))
 	for i := range arr {
-		integers[i], _ = strconv.ParseInt(arr[i], 10, 64)
+		integers[i], _ = strconv.ParseInt(strings.Trim(arr[i], " "), 10, 64)
 	}
 	return integers
 }
@@ -118,7 +118,7 @@ func (o *ValueListFloats) Value() interface{} {
 	arr := strings.Split(tmp, ",")
 	doubles := make([]float64, len(arr))
 	for i := range arr {
-		doubles[i], _ = strconv.ParseFloat(arr[i], 64)
+		doubles[i], _ = strconv.ParseFloat(strings.Trim(arr[i], " "), 64)
 	}
 	return doubles
 }
@@ -141,7 +141,12 @@ func (o *ValueListStrings) Raw() string {
 
 func (o *ValueListStrings) Value() interface{} {
 	tmp := o.text[1 : len(o.text)-1]
-	return strings.Split(tmp, ",")
+	arr := strings.Split(tmp, ",")
+	ret := make([]string, len(arr))
+	for i := range arr {
+		ret[i] = exactString(arr[i])
+	}
+	return ret
 }
 
 type ValueInteger struct {
@@ -247,8 +252,14 @@ func (o *ValueString) Raw() string {
 }
 
 func (o *ValueString) Value() interface{} {
-	if len(o.text) >= 2 && o.text[0] == '"' && o.text[len(o.text)-1] == '"' {
-		return o.text[1 : len(o.text)-1]
+	return exactString(o.text)
+}
+
+func exactString(s string) string {
+	s = strings.Trim(s, " ")
+	size := len(s)
+	if len(s) >= 2 && s[0] == '"' && s[size-1] == '"' {
+		return s[1 : size-1]
 	}
-	return o.text
+	return s
 }

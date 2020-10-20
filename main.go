@@ -11,9 +11,19 @@ func main() {
 		"number": 4,
 		"string": "value",
 		"float":  3.1415,
+		"obj": map[string]interface{}{
+			"bool":   false,
+			"number": 4,
+			"string": "value",
+			"float":  3.1415,
+			"arr":    []string{"a", "b", "c"},
+		},
+		"arr": []string{"a", "b", "c"},
 	}
 
-	rule := `number == 4 and bool == false and string == "value" and float >= 3.1415`
+	// `number == 4 and bool == false and string == "value" and float >= 3.1415`
+	//
+	rule := `obj.arr[0] == "a"`
 	res, err := rules.Evaluate(rule, m)
 	if err != nil {
 		panic(err)
