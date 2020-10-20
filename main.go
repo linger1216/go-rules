@@ -73,7 +73,7 @@ func main() {
 		},
 	}
 
-	rule := `m2.arr[0].list_number2[0] == 1`
+	rule := `m2.arr[0].list_number2[0] == 1 And number == 4`
 
 	res, err := rules.Evaluate(rule, m)
 	if err != nil {

@@ -1,29 +1,50 @@
 # go-rules
 
-https://github.com/firewut/go-json-map
 
-grammar Expr;
 
-// Tokens
-AND: A N D;
-OR: O R;
-LOOP: L O O P;
-ID: [a-zA-Z_0-9][a-zA-Z_0-9]*;
-WHITESPACE: [ \r\n\t]+ -> skip;
 
-fragment A : [aA];
-fragment N : [nN];
-fragment D : [dD];
-fragment O : [oO];
-fragment R : [rR];
-fragment L : [lL];
-fragment P : [pP];
 
-// Rules
-start : expression EOF;
+### Logical Operator
 
-expression
-   : expression op=(AND|OR|LOOP) expression # ANDOR
-   | ID                                    # ID
-   | '(' expression ')'                    # Parenthesis
-   ;
+- and
+- or
+
+
+
+
+
+### Compare Operator
+
+- `== or eq`
+- `!= or ne`
+- `> or gt`
+- `>= or ge`
+- `< or lt`
+- `<= or le`
+- `contain`
+- `prefix`
+- `suffix`
+- `in`
+- `refex`
+
+
+
+
+
+### Value
+
+| Type         | example value |
+| ------------ | ------------- |
+| boolean      | true or false |
+| null         | null          |
+| string       | "hello"       |
+| list string  | [s1, s2, s3]  |
+| float        | 3.1415        |
+| list float   | [1.0,2.0]     |
+| integer      | 1             |
+| list integer | [1,2,3]       |
+
+
+
+### Json Path
+

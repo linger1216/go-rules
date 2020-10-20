@@ -65,9 +65,8 @@ var deserializer = antlr.NewATNDeserializer(nil)
 var deserializedATN = deserializer.DeserializeFromUInt16(parserATN)
 
 var literalNames = []string{
-	"", "'('", "')'", "'.'", "'-'", "'['", "']'", "", "", "", "", "", "'=='",
-	"'!='", "'>'", "'<'", "'>='", "'<='", "'contain'", "'prefix'", "'suffix'",
-	"'regex'", "", "", "", "", "", "", "'\n'",
+	"", "'('", "')'", "'.'", "'-'", "'['", "']'", "", "", "", "", "", "", "",
+	"", "", "", "", "", "", "", "", "", "", "", "", "", "", "'\n'",
 }
 var symbolicNames = []string{
 	"", "", "", "", "", "", "", "NOT", "LOGICAL_OPERATOR", "BOOLEAN", "NULL",

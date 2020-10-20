@@ -43,7 +43,7 @@ func (e *ExprListener) Result() (bool, error) {
 
 	if !e.stack.empty() {
 		res := e.stack.pop()
-		if res.Type() != TypeBoolean {
+		if res.Type() != TypeResultBoolean {
 			return false, ErrInvalidType
 		}
 		return res.Value().(bool), nil
@@ -229,7 +229,7 @@ func (e *ExprListener) ExitLogicalExp(c *parser.LogicalExpContext) {
 	//fmt.Println(c.LOGICAL_OPERATOR().GetText())
 	var res bool
 	right, left := e.stack.pop(), e.stack.pop()
-	if right.Type() == left.Type() && left.Type() == TypeBoolean {
+	if right.Type() == left.Type() && left.Type() == TypeResultBoolean {
 		switch strings.ToLower(c.LOGICAL_OPERATOR().GetText()) {
 		case "and":
 			res = left.Value().(bool) && right.Value().(bool)

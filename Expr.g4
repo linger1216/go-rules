@@ -9,21 +9,23 @@ query
    | attrPath SP op=( EQ | NE | GT | LT | GE | LE | CONTAIN | PREFIX | SUFFIX | IN | REGEX) SP value       # compareExp
    ;
 
-NOT: 'not' | 'NOT';
-LOGICAL_OPERATOR: 'and' | 'or';
-BOOLEAN: 'true' | 'false';
-NULL: 'NULL' | 'null';
-IN:  'IN' | 'in';
-EQ : '==';
-NE : '!=';
-GT : '>';
-LT : '<';
-GE : '>=';
-LE : '<=';
-CONTAIN : 'contain';
-PREFIX : 'prefix';
-SUFFIX : 'suffix';
-REGEX : 'regex';
+
+
+NOT: N O T;
+LOGICAL_OPERATOR: A N D | O R;
+BOOLEAN: T R U E | F A L S E;
+NULL: N U L L;
+IN:  I N;
+EQ : '==' | E Q;
+NE : '!=' | N E;
+GT : '>' | G T;
+LT : '<' | L T;
+GE : '>=' | G E;
+LE : '<='| L E;
+CONTAIN : C O N T A I N;
+PREFIX : P R E F I X;
+SUFFIX : S U F F I X;
+REGEX : R E G E X;
 
 attrPath
    : ATTRNAME subAttr?
@@ -124,3 +126,32 @@ COMMA
 SP
    : ' ' NEWLINE*
    ;
+
+
+
+fragment A: [aA];
+fragment B: [bB];
+fragment C: [cC];
+fragment D: [dD];
+fragment E: [eE];
+fragment F: [fF];
+fragment G: [gG];
+fragment H: [hH];
+fragment I: [iI];
+fragment J: [jJ];
+fragment K: [kK];
+fragment L: [lL];
+fragment M: [mM];
+fragment N: [nN];
+fragment O: [oO];
+fragment P: [pP];
+fragment Q: [qQ];
+fragment R: [rR];
+fragment S: [sS];
+fragment T: [tT];
+fragment U: [uU];
+fragment V: [vV];
+fragment W: [wW];
+fragment X: [xX];
+fragment Y: [yY];
+fragment Z: [zZ];
