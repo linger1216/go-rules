@@ -14,11 +14,15 @@ func main() {
 	//fmt.Printf("%v", matched) // true
 	// one.number == 4 and a.b.c regex "[1-9]?\\+" or z > 6 and (x IN [1,2,3])
 
-	is := antlr.NewInputStream(`one.number == 4 and a.b.c regex "[1-9]?\\+" or z > 6 and (x IN [1,2,3])`)
+	// `number == 4`
+	// `list_number == 4`
+	// `string prefix "val"`
+	is := antlr.NewInputStream(`bool == false and number >= 4 and string prefix "val"`)
 	lexer := parser.NewExprLexer(is)
 	stream := antlr.NewCommonTokenStream(lexer, antlr.TokenDefaultChannel)
 
 	exprListener := rules.NewExpressionListener(map[string]interface{}{
+		"bool":   false,
 		"number": 4,
 		"list_number": []int64{
 			1, 2, 3,
@@ -47,5 +51,7 @@ func main() {
 	//if exprListener.err != nil {
 	//	panic(error())
 	//}
-	fmt.Println(exprListener.Result())
+	fmt.Println("*********************")
+	fmt.Println("result:", exprListener.Result())
+	fmt.Println("*********************")
 }

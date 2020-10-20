@@ -4,15 +4,24 @@ import (
 	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/linger1216/go-rules/parser"
+	"strings"
 )
 
 type ExpressionListener struct {
-	stack *objStack
-	obj   map[string]interface{}
+	stack  *objStack
+	obj    map[string]interface{}
+	judges map[string]Judge
 }
 
 func NewExpressionListener(obj map[string]interface{}) *ExpressionListener {
-	ret := &ExpressionListener{&objStack{}, obj}
+	ret := &ExpressionListener{&objStack{}, obj, make(map[string]Judge)}
+	ret.judges["string"] = &StringJudge{}
+	ret.judges["list_string"] = &ListStringJudge{}
+	ret.judges["float"] = &FloatJudge{}
+	ret.judges["list_float"] = &ListFloatJudge{}
+	ret.judges["integer"] = &IntegerJudge{}
+	ret.judges["list_integer"] = &ListIntegerJudge{}
+	ret.judges["boolean"] = &BooleanJudge{}
 	return ret
 }
 
@@ -27,8 +36,11 @@ func (e *ExpressionListener) push(i IFiled) {
 }
 
 func (e *ExpressionListener) Result() bool {
-	e.stack.pop()
-	return false
+	res := e.stack.pop()
+	if res.Type() != TypeBoolean {
+		return false
+	}
+	return res.Value().(bool)
 }
 
 func (e *ExpressionListener) VisitTerminal(node antlr.TerminalNode) {
@@ -115,89 +127,100 @@ func (e *ExpressionListener) ExitCompareExp(c *parser.CompareExpContext) {
 	_ = leftValue
 	_ = right
 
-	//
-	//switch c.GetOp().GetTokenType() {
-	//case parser.ExprLexerEQ:
-	//	fmt.Println("==")
-	//	res, err := judgeEQ(leftValue, right)
-	//	if err != nil {
-	//		panic(err)
-	//	}
-	//	e.push(NewResultBoolean(res))
-	//case parser.ExprLexerNE:
-	//	fmt.Println("!=")
-	//	res, err := judgeNE(leftValue, right)
-	//	if err != nil {
-	//		panic(err)
-	//	}
-	//	e.push(NewResultBoolean(res))
-	//case parser.ExprLexerGT:
-	//	fmt.Println(">")
-	//	res, err := judgeGT(leftValue, right)
-	//	if err != nil {
-	//		panic(err)
-	//	}
-	//	e.push(NewResultBoolean(res))
-	//case parser.ExprLexerLT:
-	//	fmt.Println("<")
-	//	res, err := judgeLT(leftValue, right)
-	//	if err != nil {
-	//		panic(err)
-	//	}
-	//	e.push(NewResultBoolean(res))
-	//case parser.ExprLexerGE:
-	//	fmt.Println(">=")
-	//	res, err := judgeGE(leftValue, right)
-	//	if err != nil {
-	//		panic(err)
-	//	}
-	//	e.push(NewResultBoolean(res))
-	//case parser.ExprLexerLE:
-	//	fmt.Println("<=")
-	//	res, err := judgeLE(leftValue, right)
-	//	if err != nil {
-	//		panic(err)
-	//	}
-	//	e.push(NewResultBoolean(res))
-	//case parser.ExprLexerCONTAIN:
-	//	fmt.Println("contain")
-	//	res, err := judgeContain(leftValue, right)
-	//	if err != nil {
-	//		panic(err)
-	//	}
-	//	e.push(NewResultBoolean(res))
-	//case parser.ExprLexerPREFIX:
-	//	fmt.Println("prefix")
-	//	res, err := judgePrefix(leftValue, right)
-	//	if err != nil {
-	//		panic(err)
-	//	}
-	//	e.push(NewResultBoolean(res))
-	//case parser.ExprLexerREGEX:
-	//	fmt.Println("regex")
-	//	fmt.Println("prefix")
-	//	res, err := judgeRegex(leftValue, right)
-	//	if err != nil {
-	//		panic(err)
-	//	}
-	//	e.push(NewResultBoolean(res))
-	//case parser.ExprLexerIN:
-	//	fmt.Println("in")
-	//	fmt.Println("prefix")
-	//	res, err := judgeIn(leftValue, right)
-	//	if err != nil {
-	//		panic(err)
-	//	}
-	//	e.push(NewResultBoolean(res))
-	//case parser.ExprLexerSUFFIX:
-	//	fmt.Println("suffix")
-	//	fmt.Println("prefix")
-	//	res, err := judgeSuffix(leftValue, right)
-	//	if err != nil {
-	//		panic(err)
-	//	}
-	//	e.push(NewResultBoolean(res))
-	//}
+	typeName := ""
+	switch leftValue.(type) {
+	case bool:
+		typeName = "boolean"
+	case string:
+		typeName = "string"
+	case []string:
+		typeName = "list_string"
+	case int64, int:
+		typeName = "integer"
+	case []int64, []int:
+		typeName = "list_integer"
+	case float64:
+		typeName = "float"
+	case []float64:
+		typeName = "list_float"
+	}
+
+	judge, ok := e.judges[typeName]
+	if !ok {
+		panic("not implement")
+	}
+
+	var res bool
+	switch c.GetOp().GetTokenType() {
+	case parser.ExprLexerEQ:
+		fmt.Println("==")
+		res, err = judge.EQ(leftValue, right)
+		if err != nil {
+			panic(err)
+		}
+	case parser.ExprLexerNE:
+		fmt.Println("!=")
+		res, err = judge.NE(leftValue, right)
+		if err != nil {
+			panic(err)
+		}
+	case parser.ExprLexerGT:
+		fmt.Println(">")
+		res, err = judge.GT(leftValue, right)
+		if err != nil {
+			panic(err)
+		}
+	case parser.ExprLexerLT:
+		fmt.Println("<")
+		res, err = judge.LT(leftValue, right)
+		if err != nil {
+			panic(err)
+		}
+	case parser.ExprLexerGE:
+		fmt.Println(">=")
+		res, err = judge.GE(leftValue, right)
+		if err != nil {
+			panic(err)
+		}
+	case parser.ExprLexerLE:
+		fmt.Println("<=")
+		res, err = judge.LE(leftValue, right)
+		if err != nil {
+			panic(err)
+		}
+	case parser.ExprLexerCONTAIN:
+		fmt.Println("contain")
+		res, err = judge.Contain(leftValue, right)
+		if err != nil {
+			panic(err)
+		}
+	case parser.ExprLexerPREFIX:
+		fmt.Println("prefix")
+		res, err = judge.Prefix(leftValue, right)
+		if err != nil {
+			panic(err)
+		}
+		e.push(NewResultBoolean(res))
+	case parser.ExprLexerREGEX:
+		fmt.Println("regex")
+		res, err = judge.Regex(leftValue, right)
+		if err != nil {
+			panic(err)
+		}
+	case parser.ExprLexerIN:
+		fmt.Println("in")
+		res, err = judge.In(leftValue, right)
+		if err != nil {
+			panic(err)
+		}
+	case parser.ExprLexerSUFFIX:
+		fmt.Println("suffix")
+		res, err = judge.Suffix(leftValue, right)
+		if err != nil {
+			panic(err)
+		}
+	}
+	e.push(NewResultBoolean(res))
 }
 
 func (e *ExpressionListener) ExitParenExp(c *parser.ParenExpContext) {
@@ -206,7 +229,17 @@ func (e *ExpressionListener) ExitParenExp(c *parser.ParenExpContext) {
 func (e *ExpressionListener) ExitLogicalExp(c *parser.LogicalExpContext) {
 	//left, right
 	fmt.Println(c.LOGICAL_OPERATOR().GetText())
-	e.push(NewLogical(c.LOGICAL_OPERATOR().GetText()))
+	var res bool
+	right, left := e.stack.pop(), e.stack.pop()
+	if right.Type() == left.Type() && left.Type() == TypeBoolean {
+		switch strings.ToLower(c.LOGICAL_OPERATOR().GetText()) {
+		case "and":
+			res = left.Value().(bool) && right.Value().(bool)
+		case "or":
+			res = left.Value().(bool) || right.Value().(bool)
+		}
+	}
+	e.push(NewResultBoolean(res))
 }
 
 func (e *ExpressionListener) ExitAttrPath(c *parser.AttrPathContext) {

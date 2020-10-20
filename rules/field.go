@@ -557,5 +557,8 @@ func (o *ValueString) Raw() string {
 }
 
 func (o *ValueString) Value() interface{} {
+	if len(o.text) >= 2 && o.text[0] == '"' && o.text[len(o.text)-1] == '"' {
+		return o.text[1 : len(o.text)-1]
+	}
 	return o.text
 }
