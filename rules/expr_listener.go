@@ -1,7 +1,6 @@
 package rules
 
 import (
-	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/linger1216/go-rules/parser"
 	"strings"
@@ -122,7 +121,6 @@ func (e *ExprListener) EnterSubListOfIntegers(c *parser.SubListOfIntegersContext
 }
 
 func (e *ExprListener) ExitCompareExp(c *parser.CompareExpContext) {
-
 	if e.stack.empty() {
 		e.err = ErrInvalidRule
 	}
@@ -173,37 +171,37 @@ func (e *ExprListener) ExitCompareExp(c *parser.CompareExpContext) {
 	var res bool
 	switch c.GetOp().GetTokenType() {
 	case parser.ExprLexerEQ:
-		fmt.Println("==")
+		//fmt.Println("==")
 		res, err = judge.EQ(leftValue, right)
 	case parser.ExprLexerNE:
-		fmt.Println("!=")
+		//fmt.Println("!=")
 		res, err = judge.NE(leftValue, right)
 	case parser.ExprLexerGT:
-		fmt.Println(">")
+		//fmt.Println(">")
 		res, err = judge.GT(leftValue, right)
 	case parser.ExprLexerLT:
-		fmt.Println("<")
+		//fmt.Println("<")
 		res, err = judge.LT(leftValue, right)
 	case parser.ExprLexerGE:
-		fmt.Println(">=")
+		//fmt.Println(">=")
 		res, err = judge.GE(leftValue, right)
 	case parser.ExprLexerLE:
-		fmt.Println("<=")
+		//fmt.Println("<=")
 		res, err = judge.LE(leftValue, right)
 	case parser.ExprLexerCONTAIN:
-		fmt.Println("contain")
+		//fmt.Println("contain")
 		res, err = judge.Contain(leftValue, right)
 	case parser.ExprLexerPREFIX:
-		fmt.Println("prefix")
+		//fmt.Println("prefix")
 		res, err = judge.Prefix(leftValue, right)
 	case parser.ExprLexerREGEX:
-		fmt.Println("regex")
+		//fmt.Println("regex")
 		res, err = judge.Regex(leftValue, right)
 	case parser.ExprLexerIN:
-		fmt.Println("in")
+		//fmt.Println("in")
 		res, err = judge.In(leftValue, right)
 	case parser.ExprLexerSUFFIX:
-		fmt.Println("suffix")
+		//fmt.Println("suffix")
 		res, err = judge.Suffix(leftValue, right)
 	}
 
@@ -228,7 +226,7 @@ func (e *ExprListener) ExitLogicalExp(c *parser.LogicalExpContext) {
 		return
 	}
 
-	fmt.Println(c.LOGICAL_OPERATOR().GetText())
+	//fmt.Println(c.LOGICAL_OPERATOR().GetText())
 	var res bool
 	right, left := e.stack.pop(), e.stack.pop()
 	if right.Type() == left.Type() && left.Type() == TypeBoolean {
@@ -243,7 +241,7 @@ func (e *ExprListener) ExitLogicalExp(c *parser.LogicalExpContext) {
 }
 
 func (e *ExprListener) ExitAttrPath(c *parser.AttrPathContext) {
-	fmt.Println("ExitAttrPath:", c.GetText())
+	//fmt.Println("ExitAttrPath:", c.GetText())
 	if e.err != nil {
 		return
 	}
@@ -254,7 +252,7 @@ func (e *ExprListener) ExitSubAttr(c *parser.SubAttrContext) {
 }
 
 func (e *ExprListener) ExitBoolean(c *parser.BooleanContext) {
-	fmt.Println("ExitBoolean:", c.GetText())
+	//fmt.Println("ExitBoolean:", c.GetText())
 	if e.err != nil {
 		return
 	}
@@ -262,7 +260,7 @@ func (e *ExprListener) ExitBoolean(c *parser.BooleanContext) {
 }
 
 func (e *ExprListener) ExitNull(c *parser.NullContext) {
-	fmt.Println("ExitNull:", c.GetText())
+	//fmt.Println("ExitNull:", c.GetText())
 	if e.err != nil {
 		return
 	}
@@ -270,7 +268,7 @@ func (e *ExprListener) ExitNull(c *parser.NullContext) {
 }
 
 func (e *ExprListener) ExitString(c *parser.StringContext) {
-	fmt.Println("ExitString:", c.GetText())
+	//fmt.Println("ExitString:", c.GetText())
 	if e.err != nil {
 		return
 	}
@@ -278,7 +276,7 @@ func (e *ExprListener) ExitString(c *parser.StringContext) {
 }
 
 func (e *ExprListener) ExitDouble(c *parser.DoubleContext) {
-	fmt.Println("ExitDouble:", c.GetText())
+	//fmt.Println("ExitDouble:", c.GetText())
 	if e.err != nil {
 		return
 	}
@@ -286,7 +284,7 @@ func (e *ExprListener) ExitDouble(c *parser.DoubleContext) {
 }
 
 func (e *ExprListener) ExitInteger(c *parser.IntegerContext) {
-	fmt.Println("ExitInteger:", c.GetText())
+	//fmt.Println("ExitInteger:", c.GetText())
 	if e.err != nil {
 		return
 	}
@@ -294,7 +292,7 @@ func (e *ExprListener) ExitInteger(c *parser.IntegerContext) {
 }
 
 func (e *ExprListener) ExitListStrings(c *parser.ListStringsContext) {
-	fmt.Println("ExitListStrings:", c.GetText())
+	//fmt.Println("ExitListStrings:", c.GetText())
 	if e.err != nil {
 		return
 	}
@@ -302,7 +300,7 @@ func (e *ExprListener) ExitListStrings(c *parser.ListStringsContext) {
 }
 
 func (e *ExprListener) ExitListDoubles(c *parser.ListDoublesContext) {
-	fmt.Println("ExitListDoubles:", c.GetText())
+	//fmt.Println("ExitListDoubles:", c.GetText())
 	if e.err != nil {
 		return
 	}
@@ -310,7 +308,7 @@ func (e *ExprListener) ExitListDoubles(c *parser.ListDoublesContext) {
 }
 
 func (e *ExprListener) ExitListIntegers(c *parser.ListIntegersContext) {
-	fmt.Println("ExitListIntegers:", c.GetText())
+	//fmt.Println("ExitListIntegers:", c.GetText())
 	if e.err != nil {
 		return
 	}
