@@ -1,6 +1,7 @@
 package rules
 
 import (
+	"fmt"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	"github.com/linger1216/go-rules/parser"
 	"strings"
@@ -214,6 +215,19 @@ func (e *ExprListener) ExitCompareExp(c *parser.CompareExpContext) {
 }
 
 func (e *ExprListener) ExitParenExp(c *parser.ParenExpContext) {
+	fmt.Println("ExitParenExp:", c.NOT().GetText())
+
+	if e.stack.empty() {
+		e.err = ErrInvalidRule
+	}
+
+	if e.err != nil {
+		return
+	}
+
+	ele := e.stack.pop()
+	boolean := !ele.Value().(bool)
+	e.stack.push(NewResultBoolean(boolean))
 }
 
 func (e *ExprListener) ExitLogicalExp(c *parser.LogicalExpContext) {
